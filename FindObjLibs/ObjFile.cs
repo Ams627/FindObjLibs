@@ -28,6 +28,11 @@ namespace FindObjLibs
                     name += Convert.ToChar(bytes[offset + j]);
                 }
                 Console.WriteLine($"{name}");
+                if (name == ".drectve")
+                {
+                    var address = bytes[offset + 20] + (bytes[offset + 21] << 8) + (bytes[offset + 22] << 16) + (bytes[offset + 23] << 24);
+                    Console.WriteLine();
+                }
             }
         }
     }
