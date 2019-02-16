@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace FindObjLibs
 {
+    // see https://docs.microsoft.com/en-gb/windows/desktop/Debug/pe-format#coff-file-header-object-and-image for details
     internal class ObjFile
     {
         private readonly string file;
@@ -30,8 +32,26 @@ namespace FindObjLibs
                 Console.WriteLine($"{name}");
                 if (name == ".drectve")
                 {
+                    var length = bytes[offset + 16] + (bytes[offset + 17] << 8) + (bytes[offset + 18] << 16) + (bytes[offset + 19] << 24);
                     var address = bytes[offset + 20] + (bytes[offset + 21] << 8) + (bytes[offset + 22] << 16) + (bytes[offset + 23] << 24);
-                    Console.WriteLine();
+                    foreach (var b in bytes.Skip(address).Take(length))
+                    {
+                        if (b == 32)
+                        {
+                            Console.WriteLine();
+                        }
+                        else if (b > 31)
+                        {
+                            Console.Write($"{Convert.ToChar(b)}");
+                        }
+                        else
+                        {
+                            Console.Write("$");
+                        }
+                    }
+
+                    // write section to test file:
+                    File.WriteAllBytes(@"c:\temp\ams\direct1.bin", bytes.Skip(address).Take(length).ToArray());
                 }
             }
         }
