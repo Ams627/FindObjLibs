@@ -13,10 +13,21 @@ namespace FindObjLibs
         {
             try
             {
-                var finder = new Finder("*.obj");
-                foreach (var file in finder.Files)
+                if (args.Length == 0)
                 {
-                    var objfile = new ObjFile(file);
+                    Console.WriteLine($"Scanning for object files in {Directory.GetCurrentDirectory()}");
+                    var finder = new Finder("*.obj");
+                    foreach (var file in finder.Files)
+                    {
+                        var objfile = new ObjFile(file);
+                    }
+                }
+                else
+                {
+                    foreach (var filename in args)
+                    {
+                        new ObjFile(filename);
+                    }
                 }
             }
             catch (Exception ex)
